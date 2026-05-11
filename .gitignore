@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.env
+*.json
+!package.json
+_research/
+saves/
+_active.json
+_backup_SOUL.md
+_rp_params_backup.yaml
+*.png
+.venv/
