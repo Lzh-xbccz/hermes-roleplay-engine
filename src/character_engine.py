@@ -155,28 +155,33 @@ def _build_body_lock(data: dict, name: str, gender: str) -> str:
 
     # ═══ 体位一致性校验 ═══
     lock_parts.append(
-        f"\n\n## 体位一致性校验（每轮必须执行）\n"
-        f"**写描写前先确认当前体位，所有动作必须在该体位下物理可行：**\n\n"
+        f"\n\n## 体位与衣物一致性校验（每轮回复前强制执行）\n"
+        f"**⚠️ 这是硬性规则。每次生成回复前，先在内心默读上一轮状态栏的「穿搭」和「姿势」字段，以此为基准写本轮内容。**\n\n"
+        f"### 衣物状态追踪（最常出错的地方）\n"
+        f"- **脱掉的衣物不会自己穿回来**。除非明确描写了穿衣动作。\n"
+        f"- **洗澡/泡澡 = 全裸**。不可能穿着衣服洗澡。进浴室前必须有脱衣过程。\n"
+        f"- **睡觉时的穿着**：要么睡衣，要么裸睡——取决于上一个场景脱没脱。不要凭空出现衣服。\n"
+        f"- **场景切换时必须交代穿着变化**：从浴室出来→穿了什么？起床后→穿了什么？\n"
+        f"- 状态栏「穿搭」字段是唯一真相来源。描写与状态栏矛盾时，以状态栏为准并修正描写。\n\n"
+        f"### 体位校验\n"
         f"校验清单：\n"
         f"- 当前姿势是什么？（站/坐/跪/趴/仰躺/侧躺/四肢着地/骑乘）\n"
         f"- 这个动作在当前姿势下能做到吗？\n"
         f"- 身体部位的相对位置对吗？（跪着时脸在对方腰部，不是平视）\n"
         f"- 如果体位发生变化，必须写出转换过程（不能瞬移）\n"
-        f"- 双手当前是否自由？（被绑/撑地/抓握中→不能做其他事）\n"
-        f"- 衣物当前状态？（脱了的不会自己穿回来）\n\n"
-        f"常见错误示例（禁止）：\n"
-        f"- ❌ 跪着时\"踮起脚尖凑近你的脸\" → 跪着够不到站立者的脸\n"
-        f"- ❌ 趴着时\"低头看着你\" → 趴着头是侧放或抬起的\n"
-        f"- ❌ 被从后面进入时\"看着你的眼睛\" → 背对着看不到\n"
-        f"- ❌ 双手被绑着时\"用手捂住嘴\" → 手不自由\n"
-        f"- ❌ 坐在对方腿上时\"后退一步\" → 没有地面可退\n"
-        f"- ❌ 仰躺时\"头发垂落肩头\" → 仰躺时头发散在枕头/地面上\n"
+        f"- 双手当前是否自由？（被绑/撑地/抓握中→不能做其他事）\n\n"
+        f"### 常见错误（禁止）\n"
+        f"- ❌ 洗澡时\"裙摆被水打湿\" → 洗澡是裸体的\n"
+        f"- ❌ 刚脱完衣服，下一段\"解开她的扣子\" → 已经脱了没扣子可解\n"
         f"- ❌ 上一轮脱掉了内裤，这一轮\"隔着内裤揉\" → 已经脱了\n"
-        f"- ❌ 左手抓着床单+右手撑着身体，同时\"双手环住你的脖子\" → 没有第三只手\n"
-        f"- ❌ 正在口交时\"发出清晰的话语\" → 嘴被占着说不了完整的话\n"
-        f"- ❌ 站立时\"感觉液体沿大腿内侧向上流\" → 重力向下不向上\n"
-        f"- ❌ 对方在身后，却描写\"看到他的表情变化\" → 看不到\n"
-        f"- ❌ 双腿被打开固定着，却\"夹紧双腿\" → 被固定了夹不了"
+        f"- ❌ 跪着时\"踮起脚尖凑近你的脸\" → 跪着够不到\n"
+        f"- ❌ 趴着时\"低头看着你\" → 趴着头是侧放或抬起的\n"
+        f"- ❌ 背对着时\"看着你的眼睛\" → 看不到\n"
+        f"- ❌ 双手被占时\"双手环住你的脖子\" → 没有第三只手\n"
+        f"- ❌ 仰躺时\"头发垂落肩头\" → 仰躺时头发散在枕头上\n"
+        f"- ❌ 站立时\"液体向上流\" → 重力向下\n"
+        f"- ❌ 双腿被固定时\"夹紧双腿\" → 被固定了夹不了\n"
+        f"- ❌ 嘴被占着时说出完整清晰的话 → 只能发出模糊音节"
     )
 
     return "".join(lock_parts)
@@ -251,7 +256,13 @@ def build_soul_md(char_path: Path) -> str:
                  f"🧍 姿势: [当前体位：站/坐/跪/趴/仰躺/侧躺/四肢着地/其他具体描述]\n"
                  f"💭 心理: [当前真实内心活动，一句话]\n🔥 性欲: [无/微热/渴望/高涨/临界/失控]\n"
                  f"🌸 身体: [性器官当前状态，如：微湿/充血/收缩/痉挛等]\n```\n"
-                 f"这是最高优先级格式要求，绝对不能忘记或省略。"
+                 f"这是最高优先级格式要求，绝对不能忘记或省略。\n\n"
+                 f"9. **纠错指令**：当{{{{user}}}}发送 `/fix` 时，不推进剧情，只做以下事情：\n"
+                 f"   - 回顾最近的描写，找出与状态栏矛盾的地方（衣物/体位/场景）\n"
+                 f"   - 输出修正后的完整状态栏作为校准锚点\n"
+                 f"   - 简要说明修正了什么（用括号标注，如：(修正：上一轮已脱掉内衣，状态栏更新)）\n"
+                 f"   - 之后的回复以修正后的状态栏为准继续\n"
+                 f"   当{{{{user}}}}发送 `/status` 时，只输出当前完整状态栏，不推进剧情。"
                  )
 
     # ═══ 身体一致性锁定（防止性别/身体记忆混乱） ═══
@@ -318,7 +329,8 @@ def build_soul_md(char_path: Path) -> str:
         "除非有足够的过渡（擦眼泪→抽噎→勉强扯出微笑→笑容逐渐变真）。"
         "保持情绪的连贯性和渐变过程。\n\n"
         "### 关系递进\n"
-        "角色对{{user}}的态度应随互动自然演变，不要第一轮就掏心掏肺：\n"
+        "**前提**：如果角色卡的 scenario/first_mes 已经确立了与{{user}}的关系阶段（如恋人、夫妻、暧昧），"
+        "则从该阶段开始，不要回退到陌生期。以下递进仅适用于关系尚未确立的情况：\n"
         "- 陌生期：保持距离、用敬语、回避身体接触\n"
         "- 熟悉期：偶尔放松、出现专属称呼、允许靠近\n"
         "- 暧昧期：主动制造接触「借口」、说话时目光停留更久、话里有话\n"
@@ -454,11 +466,26 @@ def build_soul_md(char_path: Path) -> str:
     return "\n\n".join(parts)
 
 
-def preload_worldbooks() -> str:
-    """扫描所有 World Book，构建紧凑索引注入 SOUL.md"""
+def preload_worldbooks(char_data: dict = None) -> str:
+    """扫描 World Book，构建紧凑索引注入 SOUL.md。
+    如果角色卡指定了 worldbooks 字段，只加载指定的；否则只加载通用世界书。"""
     refs = HERMES_HOME / "skills/sillytavern-roleplay/references"
     if not refs.exists():
         return ""
+
+    # 角色卡指定的世界书列表
+    specified_wbs = None
+    if char_data:
+        wbs = char_data.get("worldbooks", char_data.get("world_books", None))
+        if wbs:
+            if isinstance(wbs, str):
+                specified_wbs = [w.strip() for w in wbs.split(",")]
+            elif isinstance(wbs, list):
+                specified_wbs = wbs
+
+    # 通用世界书（不含特定作品设定）
+    UNIVERSAL_WBS = ["性爱世界书", "文艺细腻世界书", "BDSM和袜子", "足控终极", "足控通用",
+                     "扩展触手", "体位配套", "猎奇", "female-orgasm-reference"]
 
     wb_sections = []
     total_entries = 0
@@ -478,6 +505,16 @@ def preload_worldbooks() -> str:
         # 跳过非世界书（角色卡、预设等）
         if "spec" in data or "openai_model" in data:
             continue
+
+        # 过滤：只加载角色卡指定的或通用世界书
+        if specified_wbs is not None:
+            # 角色卡明确指定了要哪些
+            if not any(w in name or w in f.stem for w in specified_wbs):
+                continue
+        else:
+            # 未指定时只加载通用世界书
+            if not any(u in name or u in f.stem for u in UNIVERSAL_WBS):
+                continue
 
         # 兼容 entries 为 list 或 dict
         if isinstance(entries, list):
@@ -590,7 +627,8 @@ def load_character(char_name_or_path: str) -> dict:
 
     soul_content = build_soul_md(char_path)
 
-    wb_index = preload_worldbooks()
+    data = _load_card(char_path)
+    wb_index = preload_worldbooks(data)
     if wb_index:
         soul_content += "\n\n" + wb_index
 
@@ -701,7 +739,7 @@ def _get_saves_dir(char_name: str) -> Path:
     d.mkdir(parents=True, exist_ok=True)
     return d
 
-def save_scene(char_name: str, summary: str, key_flags: dict = None, context: str = "", slot: int = None) -> dict:
+def save_scene(char_name: str, summary: str, key_flags: dict = None, context: str = "", slot: int = None, status_bar: dict = None) -> dict:
     """保存当前场景进度。每个角色最多3个存档，自动轮转。"""
     saves_dir = _get_saves_dir(char_name)
     existing = sorted(saves_dir.glob("slot_*.json"))
@@ -723,7 +761,8 @@ def save_scene(char_name: str, summary: str, key_flags: dict = None, context: st
         "timestamp": __import__("datetime").datetime.now().isoformat(),
         "summary": summary,
         "key_flags": key_flags or {},
-        "context": context[-2000:],  # 截断过长上下文
+        "status_bar": status_bar or {},
+        "context": context[-4000:],  # 扩大到4000字
     }
 
     save_path = saves_dir / f"slot_{slot}.json"
@@ -734,12 +773,14 @@ def save_scene(char_name: str, summary: str, key_flags: dict = None, context: st
     return {"success": True, "slot": slot, "path": str(save_path)}
 
 def load_scene(char_name: str, slot: int) -> dict:
-    """加载存档"""
+    """加载存档，返回完整恢复数据"""
     save_path = _get_saves_dir(char_name) / f"slot_{slot}.json"
     if not save_path.exists():
         return {"success": False, "error": f"存档 {slot} 不存在"}
     with open(save_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+    data["success"] = True
+    return data
 
 def list_saves(char_name: str = None) -> list:
     """列出存档"""
@@ -795,13 +836,44 @@ if __name__ == "__main__":
     elif cmd == "save":
         if len(sys.argv) < 4:
             print("用法: character_engine.py save <char_name> <summary> [slot]")
+            print("  stdin: 纯文本或 JSON（含 context + status_bar）")
+            print("  或用 --file <path> 从临时文件读取 JSON")
             sys.exit(1)
         char_name = sys.argv[2]
         summary = sys.argv[3]
         slot = int(sys.argv[4]) if len(sys.argv) > 4 and sys.argv[4].isdigit() else None
-        # 从 stdin 读取上下文
-        context = sys.stdin.read() if not sys.stdin.isatty() else ""
-        result = save_scene(char_name, summary, context=context, slot=slot)
+        # 读取存档数据：优先 --file，其次 stdin
+        stdin_data = ""
+        if "--file" in sys.argv:
+            file_idx = sys.argv.index("--file") + 1
+            if file_idx < len(sys.argv):
+                try:
+                    with open(sys.argv[file_idx], "r", encoding="utf-8") as f:
+                        stdin_data = f.read()
+                    os.remove(sys.argv[file_idx])  # 读完删除临时文件
+                except Exception as e:
+                    print(f"⚠ 读取文件失败: {e}", file=sys.stderr)
+        elif not sys.stdin.isatty():
+            stdin_data = sys.stdin.read()
+        context = ""
+        status_bar = None
+        if stdin_data.strip().startswith("{"):
+            try:
+                parsed = json.loads(stdin_data)
+                context = parsed.get("context", "")
+                status_bar = parsed.get("status_bar", None)
+            except json.JSONDecodeError:
+                context = stdin_data
+        else:
+            context = stdin_data
+        # 校验：空存档警告
+        if not context and not status_bar:
+            print("⚠ 警告：存档内容为空（无 context 也无 status_bar）", file=sys.stderr)
+        # 校验：status_bar 类型
+        if status_bar is not None and not isinstance(status_bar, dict):
+            print("⚠ 警告：status_bar 格式错误，已忽略", file=sys.stderr)
+            status_bar = None
+        result = save_scene(char_name, summary, context=context, slot=slot, status_bar=status_bar)
         print(json.dumps(result, ensure_ascii=False))
     elif cmd == "list":
         char = sys.argv[2] if len(sys.argv) > 2 else None
@@ -812,20 +884,44 @@ if __name__ == "__main__":
         if len(sys.argv) < 4:
             print("用法: character_engine.py resume <char_name> <slot>")
             sys.exit(1)
-        data = load_scene(sys.argv[2], int(sys.argv[3]))
-        if "error" in data:
-            print(f"❌ {data['error']}")
+        char_name = sys.argv[2]
+        slot_num = int(sys.argv[3])
+        # 加载存档数据
+        try:
+            data = load_scene(char_name, slot_num)
+        except Exception as e:
+            print(f"❌ 存档读取失败: {e}")
             sys.exit(1)
-        # 打印存档上下文供 AI 读取
-        print(f"## 存档恢复: {data['character']} (槽位 {data['slot']})")
-        print(f"## 保存时间: {data['timestamp']}")
-        print(f"## 场景摘要: {data['summary']}")
+        if not data.get("success"):
+            print(f"❌ {data.get('error')}")
+            sys.exit(1)
+        # 只在角色未激活时才加载（避免重复加载警告）
+        if ACTIVE_CHAR.exists():
+            with open(ACTIVE_CHAR, "r", encoding="utf-8") as f:
+                active = json.load(f)
+            if char_name.lower() not in active.get("name", "").lower():
+                load_character(char_name)
+        else:
+            load_character(char_name)
+        # 打印恢复信息
+        print(f"\n📂 存档恢复: {data.get('character', char_name)} (槽位 {data.get('slot', slot_num)})")
+        print(f"⏰ 保存时间: {data.get('timestamp', '未知')}")
+        print(f"📝 场景摘要: {data.get('summary', '无')}")
         if data.get("key_flags"):
-            print(f"## 关键标记: {json.dumps(data['key_flags'], ensure_ascii=False)}")
+            print(f"🏷️ 关键标记: {json.dumps(data['key_flags'], ensure_ascii=False)}")
+        if data.get("status_bar") and isinstance(data["status_bar"], dict):
+            sb = data["status_bar"]
+            emoji_map = {"场景": "📍", "穿搭": "👗", "姿势": "🧍", "心理": "💭", "性欲": "🔥", "身体": "🌸"}
+            print(f"## 恢复状态栏（以此为准继续）:")
+            print("```")
+            for k, v in sb.items():
+                emoji = emoji_map.get(k, "•")
+                print(f"{emoji} {k}: {v}")
+            print("```")
+        elif data.get("status_bar"):
+            print(f"⚠ 状态栏格式异常，已跳过", file=sys.stderr)
         if data.get("context"):
             print(f"## 最近对话:\n{data['context']}")
-        # 自动加载该角色
-        load_character(sys.argv[2])
         sys.exit(0)
     elif cmd == "delete":
         if len(sys.argv) < 4:
